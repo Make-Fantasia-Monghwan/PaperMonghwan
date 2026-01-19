@@ -10,7 +10,7 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.9.0"
 }
 
-rootProject.name = "monghwan"
+rootProject.name = "fork"
 
-include("monghwan-api")
-include("monghwan-server")
+include("fork-api")
+include("fork-server")

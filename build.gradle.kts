@@ -11,18 +11,18 @@ paperweight {
 
         patchFile {
             path = "paper-server/build.gradle.kts"
-            outputFile = file("monghwan-server/build.gradle.kts")
-            patchFile = file("monghwan-server/build.gradle.kts.patch")
+            outputFile = file("fork-server/build.gradle.kts")
+            patchFile = file("fork-server/build.gradle.kts.patch")
         }
         patchFile {
             path = "paper-api/build.gradle.kts"
-            outputFile = file("monghwan-api/build.gradle.kts")
-            patchFile = file("monghwan-api/build.gradle.kts.patch")
+            outputFile = file("fork-api/build.gradle.kts")
+            patchFile = file("fork-api/build.gradle.kts.patch")
         }
         patchDir("paperApi") {
             upstreamPath = "paper-api"
             excludes = setOf("build.gradle.kts")
-            patchesDir = file("monghwan-api/paper-patches")
+            patchesDir = file("fork-api/paper-patches")
             outputDir = file("paper-api")
         }
     }
