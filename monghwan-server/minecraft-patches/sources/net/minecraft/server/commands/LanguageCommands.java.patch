@@ -1,0 +1,43 @@
+--- /dev/null
++++ b/net/minecraft/server/commands/LanguageCommands.java
+@@ -1,0 +_,40 @@
++package net.minecraft.server.commands;
++
++import com.google.common.collect.ImmutableList;
++import com.mojang.brigadier.CommandDispatcher;
++import java.util.Collection;
++import java.util.Objects;
++
++import kr.mcv.monghwan.Language;
++import net.minecraft.commands.CommandSourceStack;
++import net.minecraft.commands.Commands;
++import net.minecraft.commands.arguments.EntityArgument;
++import net.minecraft.network.chat.Component;
++import net.minecraft.world.entity.Entity;
++import com.mojang.brigadier.arguments.StringArgumentType;
++
++public class LanguageCommands {
++    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
++        dispatcher.register(
++                Commands.literal("language")
++                        .requires(Commands.hasPermission(2))
++                        .then(
++                                Commands.argument("language", StringArgumentType.string())
++                                        .executes(context -> language(context.getSource(), StringArgumentType.getString(context, "language")))
++                        )
++        );
++    }
++
++    private static int language(CommandSourceStack source, String language) {
++        kr.mcv.monghwan.Language old = source.getPlayer().userLanguage;
++        if (language.equals("ko")) {
++            source.getPlayer().userLanguage = Language.KOREAN;
++        }
++        if (language.equals("en")) {
++            source.getPlayer().userLanguage = Language.ENGLISH;
++        }
++
++        source.sendSuccess(() -> Component.literal("이전 상태" + old), true);
++        return 0;
++    }
++}

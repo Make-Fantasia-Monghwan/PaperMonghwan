@@ -1,0 +1,63 @@
+--- /dev/null
++++ b/kr/mcv/monghwan/LangManager.java
+@@ -1,0 +_,60 @@
++package kr.mcv.monghwan;
++
++import org.yaml.snakeyaml.Yaml;
++
++import java.io.InputStream;
++import java.text.MessageFormat;
++import java.util.Arrays;
++import java.util.EnumMap;
++import java.util.Map;
++
++public class LangManager {
++
++    private static final Map<Language, Map<String, String>> messagesMap = new EnumMap<>(Language.class);
++
++    // 한 번만 초기화
++    public static void init() {
++        for (Language lang : Language.values()) {
++            messagesMap.put(lang, loadYaml(lang));
++        }
++    }
++
++    // YAML 파일 로딩 (enum에서 파일명 가져오기)
++    private static Map<String, String> loadYaml(Language lang) {
++        Yaml yaml = new Yaml();
++        String path = "messages/" + lang.getFileName();
++        InputStream inputStream = LangManager.class.getClassLoader().getResourceAsStream(path);
++
++        if (inputStream == null) {
++            System.err.println("Warning: File not found: " + path);
++            return Map.of(); // 빈 Map으로 fallback
++        }
++
++        return yaml.load(inputStream);
++    }
++
++    // 메시지 가져오기 (MessageFormat + 변수 치환)
++    public static String getMessage(Language lang, String key, Object... args) {
++        Map<String, String> langMessages = messagesMap.get(lang);
++        if (langMessages == null) langMessages = Map.of(); // 안전 fallback
++
++        String pattern = langMessages.getOrDefault(key, "Can't find key please report to developer: " + key + "키를 찾을 수 업습니다. 개발자에게 제보해주세요." + Arrays.toString(args));
++
++        // MessageFormat에서는 단일 인용부호(')가 특별 취급되므로, 리터럴 '를 유지하려면 ''로 이스케이프해야 함
++        if (pattern != null && pattern.indexOf('\'') >= 0) {
++            pattern = pattern.replace("'", "''");
++        }
++
++        // MessageFormat 적용
++        return MessageFormat.format(pattern, args);
++    }
++
++    // 테스트
++    public static void main(String[] args) {
++        init();
++
++        System.out.println(getMessage(Language.KOREAN, "player.gamemode", "크리에이티브"));
++        System.out.println(getMessage(Language.JAPANESE, "player.gamemode.other", "MarsNeptune_2024", getMessage(Language.JAPANESE, "player.gamemode.survival")));
++        System.out.println(getMessage(Language.KOREAN, "unknownKey", "철수", "영희"));
++    }
++}

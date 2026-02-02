@@ -1,0 +1,28 @@
+--- /dev/null
++++ b/kr/mcv/monghwan/Language.java
+@@ -1,0 +_,25 @@
++package kr.mcv.monghwan;
++
++public enum Language {
++    KOREAN("ko", "messages_ko.yml"),
++    ENGLISH("en", "messages_en.yml"),
++    JAPANESE("ja", "messages_ja.yml");
++
++    private final String code;      // ISO 639-1 언어 코드
++    private final String fileName;  // 메시지 YAML 파일 이름
++
++    // 생성자
++    Language(String code, String fileName) {
++        this.code = code;
++        this.fileName = fileName;
++    }
++
++    // Getter
++    public String getCode() {
++        return code;
++    }
++
++    public String getFileName() {
++        return fileName;
++    }
++}

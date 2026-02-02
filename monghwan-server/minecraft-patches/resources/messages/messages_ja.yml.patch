@@ -1,0 +1,9 @@
+--- /dev/null
++++ b/messages/messages_ja.yml
+@@ -1,0 +_,6 @@
++player.gamemode: "[✅] ゲームモードが{0}に変更されました。"
++player.gamemode.other: "[✅] §a{0}さんのゲームモードを{1}に変更しました。"
++player.gamemode.survival: "サバイバル"
++player.gamemode.creative: "クリエイティブ"
++player.gamemode.adventure: "アドベンチャー"
++player.gamemode.spectator: "スペクテイター"

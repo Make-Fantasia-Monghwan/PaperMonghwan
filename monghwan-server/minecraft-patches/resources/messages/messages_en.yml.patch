@@ -1,0 +1,9 @@
+--- /dev/null
++++ b/messages/messages_en.yml
+@@ -1,0 +_,6 @@
++player.gamemode: "[✅] The game mode has been changed to {0}."
++player.gamemode.other: "[✅] §aChanged {0}'s game mode to {1}."
++player.gamemode.survival: "Survival"
++player.gamemode.creative: "Creative"
++player.gamemode.adventure: "Adventure"
++player.gamemode.spectator: "Spectator"
