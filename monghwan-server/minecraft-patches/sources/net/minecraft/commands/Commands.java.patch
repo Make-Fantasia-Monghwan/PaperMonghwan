@@ -1,0 +1,189 @@
+--- a/net/minecraft/commands/Commands.java
++++ b/net/minecraft/commands/Commands.java
+@@ -82,6 +_,7 @@
+ import net.minecraft.server.commands.JfrCommand;
+ import net.minecraft.server.commands.KickCommand;
+ import net.minecraft.server.commands.KillCommand;
++import net.minecraft.server.commands.LanguageCommands;
+ import net.minecraft.server.commands.ListPlayersCommand;
+ import net.minecraft.server.commands.LocateCommand;
+ import net.minecraft.server.commands.LootCommand;
+@@ -177,11 +_,11 @@
+     private final CommandDispatcher<CommandSourceStack> dispatcher = new CommandDispatcher<>();
+ 
+     public Commands(Commands.CommandSelection selection, CommandBuildContext context) {
+-    // Paper start - Brigadier API - modern minecraft overloads that do not use redirects but are copies instead
++        // Paper start - Brigadier API - modern minecraft overloads that do not use redirects but are copies instead
+         this(selection, context, false);
+     }
+     public Commands(Commands.CommandSelection selection, CommandBuildContext context, final boolean modern) {
+-    // Paper end - Brigadier API - modern minecraft overloads that do not use redirects but are copies instead
++        // Paper end - Brigadier API - modern minecraft overloads that do not use redirects but are copies instead
+         AdvancementCommands.register(this.dispatcher);
+         AttributeCommand.register(this.dispatcher, context);
+         ExecuteCommand.register(this.dispatcher, context);
+@@ -210,6 +_,7 @@
+         ItemCommands.register(this.dispatcher, context);
+         KickCommand.register(this.dispatcher);
+         KillCommand.register(this.dispatcher);
++        LanguageCommands.register(this.dispatcher);
+         ListPlayersCommand.register(this.dispatcher);
+         LocateCommand.register(this.dispatcher, context);
+         LootCommand.register(this.dispatcher, context);
+@@ -302,10 +_,10 @@
+                 // Modern behaviour that simply creates a full copy of the commands node.
+                 // Avoids plenty of issues around registering redirects *to* these nodes from the API
+                 this.dispatcher.getRoot().addChild(
+-                    io.papermc.paper.command.brigadier.PaperBrigadier.copyLiteral(
+-                        "minecraft:" + node.getName(),
+-                        (com.mojang.brigadier.tree.LiteralCommandNode<CommandSourceStack>) node
+-                    )
++                        io.papermc.paper.command.brigadier.PaperBrigadier.copyLiteral(
++                                "minecraft:" + node.getName(),
++                                (com.mojang.brigadier.tree.LiteralCommandNode<CommandSourceStack>) node
++                        )
+                 );
+                 continue;
+             }
+@@ -316,10 +_,10 @@
+             while (flattenedAliasTarget.getRedirect() != null) flattenedAliasTarget = flattenedAliasTarget.getRedirect();
+ 
+             this.dispatcher.register(
+-                com.mojang.brigadier.builder.LiteralArgumentBuilder.<CommandSourceStack>literal("minecraft:" + node.getName())
+-                    .executes(flattenedAliasTarget.getCommand())
+-                    .requires(flattenedAliasTarget.getRequirement())
+-                    .redirect(flattenedAliasTarget));
++                    com.mojang.brigadier.builder.LiteralArgumentBuilder.<CommandSourceStack>literal("minecraft:" + node.getName())
++                            .executes(flattenedAliasTarget.getCommand())
++                            .requires(flattenedAliasTarget.getRequirement())
++                            .redirect(flattenedAliasTarget));
+         }
+         // Paper end - Brigadier Command API
+         this.dispatcher.setConsumer(ExecutionCommandSource.resultConsumer());
+@@ -355,10 +_,10 @@
+         try {
+             if (contextChain != null) {
+                 executeCommandInContext(
+-                    commandSourceStack,
+-                    executionContext -> ExecutionContext.queueInitialCommandExecution(
+-                        executionContext, command, contextChain, commandSourceStack, CommandResultCallback.EMPTY
+-                    )
++                        commandSourceStack,
++                        executionContext -> ExecutionContext.queueInitialCommandExecution(
++                                executionContext, command, contextChain, commandSourceStack, CommandResultCallback.EMPTY
++                        )
+                 );
+             }
+             // Paper start
+@@ -372,16 +_,16 @@
+ 
+                 for (int i = 0; i < Math.min(stackTrace.length, 3); i++) {
+                     mutableComponent.append("\n\n")
+-                        .append(stackTrace[i].getMethodName())
+-                        .append("\n ")
+-                        .append(stackTrace[i].getFileName())
+-                        .append(":")
+-                        .append(String.valueOf(stackTrace[i].getLineNumber()));
++                            .append(stackTrace[i].getMethodName())
++                            .append("\n ")
++                            .append(stackTrace[i].getFileName())
++                            .append(":")
++                            .append(String.valueOf(stackTrace[i].getLineNumber()));
+                 }
+             }
+ 
+             commandSourceStack.sendFailure(
+-                Component.translatable("command.failed").withStyle(style -> style.withHoverEvent(new HoverEvent.ShowText(mutableComponent)))
++                    Component.translatable("command.failed").withStyle(style -> style.withHoverEvent(new HoverEvent.ShowText(mutableComponent)))
+             );
+             if (SharedConstants.IS_RUNNING_IN_IDE) {
+                 commandSourceStack.sendFailure(Component.literal(Util.describeError(var12)));
+@@ -397,7 +_,7 @@
+         try {
+             validateParseResults(parseResults);
+             return ContextChain.tryFlatten(parseResults.getContext().build(command))
+-                .orElseThrow(() -> CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand().createWithContext(parseResults.getReader()));
++                    .orElseThrow(() -> CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand().createWithContext(parseResults.getReader()));
+         } catch (CommandSyntaxException var7) {
+             // Paper start - Add UnknownCommandEvent
+             final net.kyori.adventure.text.TextComponent.Builder builder = net.kyori.adventure.text.Component.text();
+@@ -407,8 +_,8 @@
+             if (var7.getInput() != null && var7.getCursor() >= 0) {
+                 int min = Math.min(var7.getInput().length(), var7.getCursor());
+                 MutableComponent mutableComponent = Component.empty()
+-                    .withStyle(ChatFormatting.GRAY)
+-                    .withStyle(style -> style.withClickEvent(new ClickEvent.SuggestCommand("/" + command)));
++                        .withStyle(ChatFormatting.GRAY)
++                        .withStyle(style -> style.withClickEvent(new ClickEvent.SuggestCommand("/" + command)));
+                 if (min > 10) {
+                     mutableComponent.append(CommonComponents.ELLIPSIS);
+                 }
+@@ -423,8 +_,8 @@
+                 // Paper start - Add UnknownCommandEvent
+                 // source.sendFailure(mutableComponent);
+                 builder
+-                    .append(net.kyori.adventure.text.Component.newline())
+-                    .append(io.papermc.paper.adventure.PaperAdventure.asAdventure(mutableComponent));
++                        .append(net.kyori.adventure.text.Component.newline())
++                        .append(io.papermc.paper.adventure.PaperAdventure.asAdventure(mutableComponent));
+             }
+             org.bukkit.event.command.UnknownCommandEvent event = new org.bukkit.event.command.UnknownCommandEvent(source.getBukkitSender(), command, org.spigotmc.SpigotConfig.unknownCommandMessage.isEmpty() ? null : builder.build());
+             org.bukkit.Bukkit.getServer().getPluginManager().callEvent(event);
+@@ -474,13 +_,13 @@
+ 
+     // Fixed pool, but with discard policy
+     public static final java.util.concurrent.ExecutorService COMMAND_SENDING_POOL = new java.util.concurrent.ThreadPoolExecutor(
+-        2, 2, 0, java.util.concurrent.TimeUnit.MILLISECONDS,
+-        new java.util.concurrent.LinkedBlockingQueue<>(),
+-        new com.google.common.util.concurrent.ThreadFactoryBuilder()
+-            .setNameFormat("Paper Async Command Builder Thread Pool - %1$d")
+-            .setUncaughtExceptionHandler(new net.minecraft.DefaultUncaughtExceptionHandlerWithName(net.minecraft.server.MinecraftServer.LOGGER))
+-            .build(),
+-        new java.util.concurrent.ThreadPoolExecutor.DiscardPolicy()
++            2, 2, 0, java.util.concurrent.TimeUnit.MILLISECONDS,
++            new java.util.concurrent.LinkedBlockingQueue<>(),
++            new com.google.common.util.concurrent.ThreadFactoryBuilder()
++                    .setNameFormat("Paper Async Command Builder Thread Pool - %1$d")
++                    .setUncaughtExceptionHandler(new net.minecraft.DefaultUncaughtExceptionHandlerWithName(net.minecraft.server.MinecraftServer.LOGGER))
++                    .build(),
++            new java.util.concurrent.ThreadPoolExecutor.DiscardPolicy()
+     );
+ 
+     private void sendAsync(ServerPlayer player, java.util.Collection<CommandNode<CommandSourceStack>> dispatcherRootChildren) {
+@@ -614,8 +_,8 @@
+             return result.getExceptions().values().iterator().next();
+         } else {
+             return result.getContext().getRange().isEmpty()
+-                ? CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand().createWithContext(result.getReader())
+-                : CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument().createWithContext(result.getReader());
++                    ? CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand().createWithContext(result.getReader())
++                    : CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument().createWithContext(result.getReader());
+         }
+     }
+ 
+@@ -663,18 +_,18 @@
+         CommandDispatcher<CommandSourceStack> dispatcher = new Commands(Commands.CommandSelection.ALL, commandBuildContext).getDispatcher();
+         RootCommandNode<CommandSourceStack> root = dispatcher.getRoot();
+         dispatcher.findAmbiguities(
+-            (commandNode, commandNode1, commandNode2, collection) -> LOGGER.warn(
+-                "Ambiguity between arguments {} and {} with inputs: {}", dispatcher.getPath(commandNode1), dispatcher.getPath(commandNode2), collection
+-            )
++                (commandNode, commandNode1, commandNode2, collection) -> LOGGER.warn(
++                        "Ambiguity between arguments {} and {} with inputs: {}", dispatcher.getPath(commandNode1), dispatcher.getPath(commandNode2), collection
++                )
+         );
+         Set<ArgumentType<?>> set = ArgumentUtils.findUsedArgumentTypes(root);
+         Set<ArgumentType<?>> set1 = set.stream()
+-            .filter(argumentType -> !ArgumentTypeInfos.isClassRecognized(argumentType.getClass()))
+-            .collect(Collectors.toSet());
++                .filter(argumentType -> !ArgumentTypeInfos.isClassRecognized(argumentType.getClass()))
++                .collect(Collectors.toSet());
+         if (!set1.isEmpty()) {
+             LOGGER.warn(
+-                "Missing type registration for following arguments:\n {}",
+-                set1.stream().map(argumentType -> "\t" + argumentType).collect(Collectors.joining(",\n"))
++                    "Missing type registration for following arguments:\n {}",
++                    set1.stream().map(argumentType -> "\t" + argumentType).collect(Collectors.joining(",\n"))
+             );
+             throw new IllegalStateException("Unregistered argument types");
+         }

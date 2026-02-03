@@ -1,0 +1,13 @@
+--- a/net/minecraft/server/Eula.java
++++ b/net/minecraft/server/Eula.java
+@@ -46,7 +_,9 @@
+             try (OutputStream outputStream = Files.newOutputStream(this.file)) {
+                 Properties map = new Properties();
+                 map.setProperty("eula", "false");
+-                map.store(outputStream, "By changing the setting below to TRUE you are indicating your agreement to our EULA (" + CommonLinks.EULA + ").");
++                //start MH
++                map.store(outputStream, "Warning: For Internal Use Only — This server is not designed for external operation. Running it outside an authorized internal environment may result in sensitive data being transmitted to external or uncontrolled servers. We assume no responsibility for any loss, damage, or data exposure, including cases involving intentional or negligent acts by server administrators. By setting eula:true and running this server, you fully accept all risks and liabilities. By changing the setting below to TRUE you are indicating your agreement to Mojang's EULA (" + CommonLinks.EULA + ").");
++                //end MH
+             } catch (Exception var6) {
+                 LOGGER.warn("Failed to save {}", this.file, var6);
+             }
