@@ -1,0 +1,28 @@
+--- /dev/null
++++ b/kr/mcv/monghwan/ChatChannel.java
+@@ -1,0 +_,25 @@
++package kr.mcv.monghwan;
++
++import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
++import org.bukkit.Bukkit;
++import org.bukkit.entity.Player;
++
++import java.util.HashSet;
++import java.util.Set;
++import java.util.UUID;
++import java.util.stream.Stream;
++
++public class ChatChannel {
++    private String type;
++    private int key;
++    private final Set<UUID> listeners = new HashSet<>();
++
++    public ChatChannel(String type, int key) {
++        this.type = type;
++        this.key = key;
++    }
++
++    public Stream<Player> getListeners() {
++        return listeners.stream().map(Bukkit::getPlayer);
++    }
++}

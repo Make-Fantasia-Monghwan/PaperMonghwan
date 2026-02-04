@@ -1,0 +1,24 @@
+--- /dev/null
++++ b/kr/mcv/monghwan/ChatChannelManager.java
+@@ -1,0 +_,21 @@
++package kr.mcv.monghwan;
++
++import java.lang.ref.WeakReference;
++import java.util.Map;
++import java.util.WeakHashMap;
++import java.util.Objects;
++
++public class ChatChannelManager {
++    // 채널 종류와 번호를 매핑하여 객체를 캐싱함
++    private static final Map<ChannelKey, ChatChannel> channelCache = new WeakHashMap<>();
++
++    public static ChatChannel getChannel(String type, int id) {
++        ChannelKey key = new ChannelKey(type, id);
++
++        // 없으면 새로 생성, 있으면 기존 객체 반환 (공유 보장)
++        return channelCache.computeIfAbsent(key, k -> new ChatChannel(k.type, k.id));
++    }
++
++    // 복합 키 클래스
++        private record ChannelKey(String type, int id) {}
++}

@@ -1,8 +1,8 @@
 --- /dev/null
 +++ b/messages/messages_ko.yml
 @@ -1,0 +_,6 @@
-+player.gamemode: "[✅] §a게임모드가 {0}(으)로 변경되었습니다."
-+player.gamemode.other: "[✅] §a{0}님의 게임모드를 {1}(으)로 변경하였습니다."
++player.gamemode: "§a[✅] 게임모드가 {0}(으)로 변경되었습니다."
++player.gamemode.other: "§a[✅] {1}님의 게임모드를 {0}(으)로 변경하였습니다."
 +player.gamemode.survival: "서바이벌"
 +player.gamemode.creative: "크리에이티브"
 +player.gamemode.adventure: "모험"

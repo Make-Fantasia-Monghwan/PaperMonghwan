@@ -26,7 +26,7 @@
          ItemCommands.register(this.dispatcher, context);
          KickCommand.register(this.dispatcher);
          KillCommand.register(this.dispatcher);
-+        LanguageCommands.register(this.dispatcher);
++        LanguageCommands.register(this.dispatcher); //Monghwan
          ListPlayersCommand.register(this.dispatcher);
          LocateCommand.register(this.dispatcher, context);
          LootCommand.register(this.dispatcher, context);

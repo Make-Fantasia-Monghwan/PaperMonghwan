@@ -1,14 +1,21 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -22,6 +_,8 @@
- import java.util.stream.Collectors;
- import javax.annotation.Nonnull;
- import javax.annotation.Nullable;
-+
-+import kr.mcv.monghwan.Language;
- import net.minecraft.ChatFormatting;
- import net.minecraft.CrashReport;
- import net.minecraft.CrashReportCategory;
+@@ -65,7 +_,6 @@
+ import net.minecraft.network.protocol.game.ClientboundHurtAnimationPacket;
+ import net.minecraft.network.protocol.game.ClientboundMerchantOffersPacket;
+ import net.minecraft.network.protocol.game.ClientboundOpenBookPacket;
+-import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
+ import net.minecraft.network.protocol.game.ClientboundOpenSignEditorPacket;
+ import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
+ import net.minecraft.network.protocol.game.ClientboundPlayerCombatEndPacket;
+@@ -88,6 +_,7 @@
+ import net.minecraft.network.protocol.status.ServerStatus;
+ import net.minecraft.resources.ResourceKey;
+ import net.minecraft.resources.ResourceLocation;
++import net.minecraft.server.Main;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.PlayerAdvancements;
+ import net.minecraft.server.dialog.Dialog;
 @@ -206,14 +_,14 @@
      public static final String ENDER_PEARL_DIMENSION_TAG = "ender_pearl_dimension";
      public static final String TAG_DIMENSION = "Dimension";
@@ -74,11 +81,14 @@
                      );
                      event.callEvent();
                      if (event.shouldTriggerAdvancements()) {
-@@ -425,6 +_,7 @@
+@@ -425,6 +_,10 @@
      public boolean joining = true;
      public boolean sentListPacket = false;
      public boolean supressTrackerForLogin = false; // Paper - Fire PlayerJoinEvent when Player is actually ready
-+    public kr.mcv.monghwan.Language userLanguage = kr.mcv.monghwan.Language.KOREAN; // MH
++    // Monghwan start
++    public kr.mcv.monghwan.Language userLanguage = kr.mcv.monghwan.Language.KOREAN;
++    public kr.mcv.monghwan.ChatChannel typingChatChannel = kr.mcv.monghwan.ChatChannelManager.getChannel("general", 1);
++    // Monghwan start
      // CraftBukkit end
      public boolean isRealPlayer; // Paper
      public @Nullable com.destroystokyo.paper.event.entity.PlayerNaturallySpawnCreaturesEvent playerNaturallySpawnedEvent; // Paper - PlayerNaturallySpawnCreaturesEvent
@@ -86,7 +96,7 @@
          super(level, gameProfile);
          this.textFilter = server.createTextFilterForPlayer(this);
          this.gameMode = server.createGameModeForPlayer(this);
-+        this.userLanguage = kr.mcv.monghwan.Language.KOREAN; // MH
++        this.userLanguage = kr.mcv.monghwan.Language.KOREAN; // Monghwan
          this.recipeBook = new ServerRecipeBook((recipe, output) -> server.getRecipeManager().listDisplaysForRecipe(recipe, output));
          this.server = server;
          this.stats = server.getPlayerList().getPlayerStats(this);
@@ -103,15 +113,18 @@
          this.respawnConfig = input.read("respawn", ServerPlayer.RespawnConfig.CODEC).orElse(null);
          this.spawnExtraParticlesOnFall = input.getBooleanOr("spawn_extra_particles_on_fall", false);
          this.raidOmenPosition = input.read("raid_omen_position", BlockPos.CODEC).orElse(null);
-+        this.userLanguage = kr.mcv.monghwan.Language.valueOf(input.getStringOr("user_language", "KOREAN"));
++        this.userLanguage = kr.mcv.monghwan.Language.valueOf(input.getStringOr("user_language", "KOREAN")); // Monghwan
      }
  
      @Override
-@@ -577,6 +_,7 @@
+@@ -577,6 +_,10 @@
          output.storeNullable("respawn", ServerPlayer.RespawnConfig.CODEC, this.respawnConfig);
          output.putBoolean("spawn_extra_particles_on_fall", this.spawnExtraParticlesOnFall);
          output.storeNullable("raid_omen_position", BlockPos.CODEC, this.raidOmenPosition);
++        // Monghwan start
 +        output.putString("user_language", this.userLanguage.name());
++        // To put saving Chatchannels
++        // Monghwan end
          this.saveEnderPearls(output);
          this.getBukkitEntity().setExtraData(output); // CraftBukkit
      }
@@ -399,7 +412,7 @@
          this.wardenSpawnTracker = that.wardenSpawnTracker;
          this.chatSession = that.chatSession;
          this.gameMode.setGameModeForPlayer(that.gameMode.getGameModeForPlayer(), that.gameMode.getPreviousGameModeForPlayer());
-+        this.userLanguage = that.userLanguage;
++        this.userLanguage = that.userLanguage; // Monghwan
          this.onUpdateAbilities();
          if (keepEverything) {
              this.getAttributes().assignBaseValues(that.getAttributes());
