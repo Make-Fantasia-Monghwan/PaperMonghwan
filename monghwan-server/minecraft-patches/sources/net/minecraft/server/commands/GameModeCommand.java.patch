@@ -1,0 +1,35 @@
+--- a/net/minecraft/server/commands/GameModeCommand.java
++++ b/net/minecraft/server/commands/GameModeCommand.java
+@@ -12,14 +_,13 @@
+ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.GameType;
++import kr.mcv.monghwan.LangManager;
+ 
+ public class GameModeCommand {
+-    public static final int PERMISSION_LEVEL = 2;
+ 
+     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+         dispatcher.register(
+             Commands.literal("gamemode")
+-                .requires(Commands.hasPermission(2))
+                 .then(
+                     Commands.argument("gamemode", GameModeArgument.gameMode())
+                         .executes(
+@@ -42,13 +_,13 @@
+     private static void logGamemodeChange(CommandSourceStack source, ServerPlayer player, GameType gameType) {
+         Component component = Component.translatable("gameMode." + gameType.getName());
+         if (source.getEntity() == player) {
+-            source.sendSuccess(() -> Component.translatable("commands.gamemode.success.self", component), true);
++            source.sendSuccess(() -> Component.literal(LangManager.getMessage(player.userLanguage, "player.gamemode", source.getPlayer().userLanguage, LangManager.getMessage(player.userLanguage, "player.gamemode." + gameType.getName(), ""))), true);
+         } else {
+             if (source.getLevel().getGameRules().getBoolean(GameRules.RULE_SENDCOMMANDFEEDBACK)) {
+-                player.sendSystemMessage(Component.translatable("gameMode.changed", component));
++                player.sendSystemMessage(Component.literal(LangManager.getMessage(player.userLanguage, "player.gamemode", player.userLanguage, LangManager.getMessage(player.userLanguage, "player.gamemode." + gameType.getName()))));
+             }
+ 
+-            source.sendSuccess(() -> Component.translatable("commands.gamemode.success.other", player.getDisplayName(), component), true);
++            source.sendSuccess(() -> Component.literal(LangManager.getMessage(player.userLanguage, "player.gamemode.other", source.getPlayer().userLanguage, LangManager.getMessage(player.userLanguage, "player.gamemode." + gameType.getName(), ""))), true);
+         }
+     }
+ 
